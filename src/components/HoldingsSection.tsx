@@ -418,14 +418,30 @@ export const HoldingsSection: React.FC<HoldingsSectionProps> = ({
             <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
               우측 하단의 '+' 버튼을 누르거나 아래 버튼으로 첫 종목을 등록하여 주식 가계부 관리를 시작해보세요.
             </p>
-            <button
-              type="button"
-              onClick={onOpenAddModal}
-              className="mt-5 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold shadow-sm shadow-indigo-500/20 active:scale-95 transition-all"
-            >
-              <i className="fa-solid fa-plus"></i>
-              첫 종목 등록하기
-            </button>
+            <div className="mt-5 flex items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={onOpenAddModal}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold shadow-sm shadow-indigo-500/20 active:scale-95 transition-all"
+              >
+                <i className="fa-solid fa-plus"></i>
+                첫 종목 등록하기
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (confirm('샘플 데이터를 불러오시겠습니까? 기존 데이터는 덮어씌워집니다.')) {
+                    // Trigger a storage clear and reload to load sample data
+                    localStorage.removeItem('stockbook_v1');
+                    window.location.reload();
+                  }
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold shadow-sm active:scale-95 transition-all"
+              >
+                <i className="fa-solid fa-vial"></i>
+                샘플 데이터 로드
+              </button>
+            </div>
           </div>
         </div>
       )}

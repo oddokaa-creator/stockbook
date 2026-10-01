@@ -18,10 +18,29 @@ export interface GeminiAdviceResult {
 }
 
 /**
- * Gemini API 호출 시 systemInstruction 상수
+ * Gemini API 호출 시 systemInstruction 생성 함수
  */
-export const GEMINI_SYSTEM_INSTRUCTION =
-  '당신은 신중하고 객관적인 개인 자산관리 코치입니다. 한국어로 답하세요. 제공된 포트폴리오 데이터만 근거로 분석하고, 모르는 시장 정보나 실시간 주가를 추측해 지어내지 마세요. 다음 순서로 답하세요: (1) 한 줄 총평 (2) 현재 포트폴리오 진단: 종목/섹터 집중도, 손익 분포 (3) 리스크 요인 (4) 개선 아이디어 2~3가지 (5) 점검할 질문 (사용자가 스스로 생각해볼 질문). 특정 종목의 매수/매도를 단정적으로 지시하지 말고, 근거와 함께 \'고려해볼 점\' 형태로 제시하세요. 마지막에 \'이 내용은 참고용이며 투자 판단과 책임은 본인에게 있습니다.\'를 한 줄로 덧붙이세요.';
+export const getGeminiSystemInstruction = (theme: string = '종합 분석') => {
+  let focus = '객관적으로 분석하고 개선 아이디어를 2~3가지 제시하세요.';
+  if (theme === '리스크 점검') {
+    focus = '포트폴리오의 리스크(집중도, 하방 경직성, 시장 위험)를 철저히 분석하고 방어적인 리밸런싱 아이디어를 제시하세요.';
+  } else if (theme === '배당금 중심 전략') {
+    focus = '배당수익률, 현금흐름 창출 능력, 배당 성장성을 중심으로 분석하고 현금흐름을 극대화할 수 있는 배당 중심 리밸런싱 아이디어를 제시하세요.';
+  } else if (theme === '성장성 중심 전략') {
+    focus = '포트폴리오의 성장 동력, 섹터 전망, 주가 상승 모멘텀을 중심으로 분석하고 공격적인 성장 위주의 리밸런싱 아이디어를 제시하세요.';
+  }
+
+  return `당신은 신중하고 객관적인 개인 자산관리 코치입니다. 한국어로 답하세요.
+제공된 포트폴리오 데이터만 근거로 분석하고, 모르는 시장 정보나 실시간 주가를 추측해 지어내지 마세요.
+현재 사용자가 요청한 분석 테마는 [${theme}] 입니다. 이에 맞춰 다음 순서로 답하세요:
+(1) 한 줄 총평
+(2) 현재 포트폴리오 진단: 종목/섹터 집중도, 손익 분포
+(3) 리스크 요인 및 테마 집중 분석: ${focus}
+(4) 개선 아이디어 2~3가지
+(5) 점검할 질문 (사용자가 스스로 생각해볼 질문).
+특정 종목의 매수/매도를 단정적으로 지시하지 말고, 근거와 함께 '고려해볼 점' 형태로 제시하세요.
+마지막에 '이 내용은 참고용이며 투자 판단과 책임은 본인에게 있습니다.'를 한 줄로 덧붙이세요.`;
+};
 
 /**
  * Gemini API를 호출하여 포트폴리오 리밸런싱 및 투자 조언을 생성합니다.
@@ -29,13 +48,15 @@ export const GEMINI_SYSTEM_INSTRUCTION =
  * @param {string} model - 모델명 (기본: gemini-3.6-flash)
  * @param {Holding[]} holdings - 보유 종목 배열
  * @param {CurrencySummary[]} currencySummaries - 통화별 요약 데이터
+ * @param {string} theme - 분석 테마 (기본: 종합 분석)
  * @returns {Promise<GeminiAdviceResult>} AI 분석 결과 객체
  */
 export async function fetchPortfolioAdvice(
   apiKey: string,
   model: string,
   holdings: Holding[],
-  currencySummaries: CurrencySummary[]
+  currencySummaries: CurrencySummary[],
+  theme: string = '종합 분석'
 ): Promise<GeminiAdviceResult> {
   if (!apiKey || !apiKey.trim()) {
     return {
@@ -103,7 +124,7 @@ export async function fetchPortfolioAdvice(
     systemInstruction: {
       parts: [
         {
-          text: GEMINI_SYSTEM_INSTRUCTION,
+          text: getGeminiSystemInstruction(theme),
         },
       ],
     },

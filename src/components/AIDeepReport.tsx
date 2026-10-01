@@ -12,7 +12,7 @@ interface AIDeepReportProps {
   currencySummaries: CurrencySummary[];
   adviceHistory: AdviceHistoryItem[];
   isLoading: boolean;
-  onGetAdvice: () => void;
+  onGetAdvice: (theme: string) => void;
   onOpenSettings: () => void;
 }
 
@@ -25,6 +25,9 @@ export const AIDeepReport: React.FC<AIDeepReportProps> = ({
   onOpenSettings,
 }) => {
   const [selectedAdviceIndex, setSelectedAdviceIndex] = useState(0);
+  const [selectedTheme, setSelectedTheme] = useState('종합 분석');
+  
+  const themes = ['종합 분석', '리스크 점검', '배당금 중심 전략', '성장성 중심 전략'];
 
   const activeAdvice = adviceHistory[selectedAdviceIndex] || adviceHistory[0] || null;
 
@@ -43,11 +46,22 @@ export const AIDeepReport: React.FC<AIDeepReportProps> = ({
             객관적 데이터 기반의 포트폴리오 진단, 리스크 요인 탐색, 2~3가지 개선 아이디어 및 스스로 점검할 질문을 분석합니다.
           </p>
 
-          <div className="flex items-center gap-3 pt-3">
+          <div className="flex items-center gap-3 pt-3 flex-wrap">
+            <select
+              value={selectedTheme}
+              onChange={(e) => setSelectedTheme(e.target.value)}
+              disabled={isLoading}
+              className="px-3 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-amber-300 disabled:opacity-50 transition-all outline-none"
+            >
+              {themes.map((theme) => (
+                <option key={theme} value={theme} className="text-slate-900">{theme}</option>
+              ))}
+            </select>
+
             <button
               type="button"
               disabled={isLoading}
-              onClick={onGetAdvice}
+              onClick={() => onGetAdvice(selectedTheme)}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-indigo-900 font-bold text-xs shadow-md hover:bg-indigo-50 active:scale-95 disabled:opacity-50 transition-all"
             >
               {isLoading ? (

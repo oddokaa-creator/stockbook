@@ -267,7 +267,7 @@ export default function App() {
   /**
    * AI 조언 받기 요청 처리
    */
-  const handleGetAdvice = async () => {
+  const handleGetAdvice = async (theme: string = '종합 분석') => {
     setAiError(null);
     setCanOpenSettings(false);
     setCanRetry(false);
@@ -292,7 +292,8 @@ export default function App() {
         apiKey,
         data.settings.model || DEFAULT_MODEL,
         data.holdings,
-        currencySummaries
+        currencySummaries,
+        theme
       );
 
       if (result.success && result.content) {
@@ -303,7 +304,7 @@ export default function App() {
           dateStr: formatDateWithDay(now),
           model: data.settings.model || DEFAULT_MODEL,
           content: result.content,
-          summaryTitle: '포트폴리오 리밸런싱 인사이트',
+          summaryTitle: `[${theme}] 포트폴리오 리밸런싱 인사이트`,
         };
 
         // 최대 10개까지 히스토리 보관

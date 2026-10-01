@@ -14,7 +14,7 @@ interface AdviceSectionProps {
   errorMessage: string | null;
   canOpenSettings: boolean;
   canRetry: boolean;
-  onGetAdvice: () => void;
+  onGetAdvice: (theme: string) => void;
   onOpenSettings: () => void;
   onSelectHistory: (item: AdviceHistoryItem) => void;
 }
@@ -34,6 +34,9 @@ export const AdviceSection: React.FC<AdviceSectionProps> = ({
   onSelectHistory,
 }) => {
   const [showHistoryDropdown, setShowHistoryDropdown] = useState(false);
+  const [selectedTheme, setSelectedTheme] = useState('종합 분석');
+  
+  const themes = ['종합 분석', '리스크 점검', '배당금 중심 전략', '성장성 중심 전략'];
 
   return (
     <section className="bg-gradient-to-br from-indigo-500/5 via-white to-indigo-500/10 dark:from-indigo-950/40 dark:via-slate-900 dark:to-slate-900 rounded-2xl p-5 sm:p-6 border border-indigo-100 dark:border-indigo-900/50 shadow-sm space-y-4">
@@ -107,12 +110,24 @@ export const AdviceSection: React.FC<AdviceSectionProps> = ({
             </div>
           )}
 
+          {/* 분석 테마 선택 드롭다운 */}
+          <select
+            value={selectedTheme}
+            onChange={(e) => setSelectedTheme(e.target.value)}
+            disabled={isLoading}
+            className="px-3 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 transition-all"
+          >
+            {themes.map((theme) => (
+              <option key={theme} value={theme}>{theme}</option>
+            ))}
+          </select>
+
           {/* AI 조언 받기 버튼 (id="advice-btn") */}
           <button
             id="advice-btn"
             type="button"
             disabled={isLoading}
-            onClick={onGetAdvice}
+            onClick={() => onGetAdvice(selectedTheme)}
             className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-xs shadow-sm shadow-indigo-500/30 transition-all duration-200"
           >
             {isLoading ? (
@@ -176,7 +191,7 @@ export const AdviceSection: React.FC<AdviceSectionProps> = ({
             {canRetry && (
               <button
                 type="button"
-                onClick={onGetAdvice}
+                onClick={() => onGetAdvice(selectedTheme)}
                 className="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-red-300 dark:border-red-800 text-red-700 dark:text-red-300 font-semibold hover:bg-red-50 transition-colors text-[11px]"
               >
                 다시 시도
