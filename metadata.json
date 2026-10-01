@@ -1,0 +1,6 @@
+{
+  "name": "StockBook - 스마트 주식 가계부",
+  "description": "개인 주식 가계부 및 포트폴리오 관리, 자산 배분 비중 분석, 배당금 캘린더, Gemini AI 어드바이저",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
